@@ -1,7 +1,6 @@
 package com.to_do_list.tareas.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,21 +10,25 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "tarea")
 public class Tarea {
 
-    @NotNull(message = "El id no puede ser nulo")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, length = 5)
     private Long id;
 
-    @NotBlank(message = "El nombre no puede ser nulo ni vacio")
+    @Column(name = "nombre_tarea", nullable = false, length = 100)
     private String nombre;
 
-    @NotNull(message = "Se tiene que asignar una hora de inicio")
+    @Column(nullable = false)
     private LocalTime hora_inicio;
 
-    @NotNull(message = "Se tiene que asignar una hora de termino")
+    @Column(nullable = false)
     private LocalTime hora_termino;
 
-    @NotNull(message = "Se tiene que asignar un estado")
+    @Column(nullable = true)
     private String estado;
 
 }
