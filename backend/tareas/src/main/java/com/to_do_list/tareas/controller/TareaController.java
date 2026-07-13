@@ -1,44 +1,51 @@
 package com.to_do_list.tareas.controller;
 
-import com.to_do_list.tareas.model.Tarea;
+import com.to_do_list.tareas.dto.TareaRequestDTO;
+import com.to_do_list.tareas.dto.TareaResponseDTO;
 import com.to_do_list.tareas.service.TareaService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/tareas")
+@RequiredArgsConstructor
 public class TareaController {
 
-    @Autowired
-    private TareaService tareaService;
+    private final TareaService tareaService;
 
     @GetMapping
-    public List<Tarea> obtenerTodo(){
-        return tareaService.obtenerTodo();
+    public ResponseEntity<List<TareaResponseDTO>> obtenerTodo(){
+        List<TareaResponseDTO> tareas = tareaService.obtenerTodo();
+        return ResponseEntity.status(HttpStatus.OK).body(tareas);
     }
 
     @PostMapping
-    public Tarea agregarTarea(@RequestBody Tarea tarea){
-        return tareaService.agregarTarea(tarea);
+    public ResponseEntity<TareaResponseDTO> agregarTarea(@RequestBody TareaRequestDTO dto){
+        TareaResponseDTO tarea = tareaService.agregarTarea(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(tarea);
     }
 
     @PutMapping("/{id}")
-    public Tarea modificarTarea(@PathVariable Long id, @RequestBody Tarea tarea){
-        return tareaService.modificarTarea(tarea, id);
+    public ResponseEntity<TareaResponseDTO> modificarTarea(@PathVariable Long id, @RequestBody TareaRequestDTO dto){
+        TareaResponseDTO tarea = tareaService.modificarTarea(dto, id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(tarea);
     }
 
     @DeleteMapping("/{id}")
-    public void eliminarTarea(@PathVariable Long id){
+    public ResponseEntity<?> eliminarTarea(@PathVariable Long id){
         tareaService.eliminarTarea(id);
+        return ResponseEntity.status(HttpStatus.CONTINUE).build();
     }
 
     @PatchMapping("/{id}")
-    public Tarea cambiarEstado(@PathVariable Long id){
-        return tareaService.cambiarEstado(id);
+    public ResponseEntity<TareaResponseDTO> cambiarEstado(@PathVariable Long id){
+        TareaResponseDTO tarea = tareaService.cambiarEstado(id);
+        return ResponseEntity.status(HttpStatus.OK).body(tarea);
+
     }
 
 }
