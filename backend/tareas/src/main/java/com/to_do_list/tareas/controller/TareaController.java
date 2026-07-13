@@ -3,6 +3,7 @@ package com.to_do_list.tareas.controller;
 import com.to_do_list.tareas.dto.TareaRequestDTO;
 import com.to_do_list.tareas.dto.TareaResponseDTO;
 import com.to_do_list.tareas.service.TareaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +25,13 @@ public class TareaController {
     }
 
     @PostMapping
-    public ResponseEntity<TareaResponseDTO> agregarTarea(@RequestBody TareaRequestDTO dto){
+    public ResponseEntity<TareaResponseDTO> agregarTarea(@Valid @RequestBody TareaRequestDTO dto){
         TareaResponseDTO tarea = tareaService.agregarTarea(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(tarea);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TareaResponseDTO> modificarTarea(@PathVariable Long id, @RequestBody TareaRequestDTO dto){
+    public ResponseEntity<TareaResponseDTO> modificarTarea(@PathVariable Long id, @Valid @RequestBody TareaRequestDTO dto){
         TareaResponseDTO tarea = tareaService.modificarTarea(dto, id);
         return ResponseEntity.status(HttpStatus.CREATED).body(tarea);
     }

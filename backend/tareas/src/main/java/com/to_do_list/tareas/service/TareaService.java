@@ -2,6 +2,7 @@ package com.to_do_list.tareas.service;
 
 import com.to_do_list.tareas.dto.TareaRequestDTO;
 import com.to_do_list.tareas.dto.TareaResponseDTO;
+import com.to_do_list.tareas.exception.TareaNotFoundException;
 import com.to_do_list.tareas.model.Tarea;
 import com.to_do_list.tareas.repository.TareaRepository;
 import jakarta.transaction.Transactional;
@@ -38,7 +39,6 @@ public class TareaService {
     @Transactional
     public TareaResponseDTO agregarTarea(TareaRequestDTO dto){
         Tarea tarea = new Tarea(null, dto.getNombre(), dto.getHoraInicio(), dto.getHoraTermino(), "PENDIENTE");
-
         return mapToDTO(tareaRepository.save(tarea));
     }
 
@@ -54,7 +54,7 @@ public class TareaService {
             return mapToDTO(tareaRepository.save(existente));
             }).orElseThrow();
         }
-        return null;
+        throw new TareaNotFoundException("Tarea con id "+id+"no encontrado");
     }
 
     @Transactional
@@ -65,6 +65,7 @@ public class TareaService {
             tareaRepository.deleteById(id);
             return;
         }
+        throw new TareaNotFoundException("Tarea con id "+id+"no encontrado");
     }
 
     @Transactional
@@ -77,7 +78,7 @@ public class TareaService {
                 return mapToDTO(tareaRepository.save(existente));
             }).orElseThrow();
         }
-        return null;
+        throw new TareaNotFoundException("Tarea con id "+id+"no encontrado");
     }
 
 }
