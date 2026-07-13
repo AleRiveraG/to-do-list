@@ -1,39 +1,83 @@
 package com.to_do_list.tareas.service;
 
+import com.to_do_list.tareas.dto.TareaRequestDTO;
+import com.to_do_list.tareas.dto.TareaResponseDTO;
 import com.to_do_list.tareas.model.Tarea;
 import com.to_do_list.tareas.repository.TareaRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Service
+@RequiredArgsConstructor
 public class TareaService {
 
-    @Autowired
-    private TareaRepository tareaRepository;
+    private final TareaRepository tareaRepository;
 
-
-    public List<Tarea> obtenerTodo(){
-        return tareaRepository.obtenerTodo();
+    public TareaResponseDTO mapToDTO(Tarea tarea){
+        return new TareaResponseDTO(
+                tarea.getId(),
+                tarea.getNombre(),
+                tarea.getHoraInicio(),
+                tarea.getHoraTermino(),
+                tarea.getEstado()
+        );
     }
 
-    public Tarea agregarTarea(Tarea tarea){
-        return tareaRepository.agregarTarea(tarea);
+    public List<TareaResponseDTO> obtenerTodo(){
+        return tareaRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Tarea modificarTarea(Tarea tarea, Long id){
-        return tareaRepository.modificarTarea(tarea, id);
+    @Transactional
+    public TareaResponseDTO agregarTarea(TareaRequestDTO dto){
+        Tarea tarea = new Tarea(null, dto.getNombre(), dto.getHoraInicio(), dto.getHoraTermino(), "PENDIENTE");
+
+        return mapToDTO(tareaRepository.save(tarea));
     }
 
+    @Transactional
+    public TareaResponseDTO modificarTarea(TareaRequestDTO dto, Long id){
+        Optional<Tarea> tarea = tareaRepository.findById(id);
+        if(tarea.isPresent()){
+            return tarea.map(existente ->{
+                existente.setNombre(dto.getNombre());
+                existente.setHoraInicio(dto.getHoraInicio());
+                existente.setHoraTermino(dto.getHoraTermino());
+
+            return mapToDTO(tareaRepository.save(existente));
+            }).orElseThrow();
+        }
+        return null;
+    }
+
+    @Transactional
     public void eliminarTarea(Long id){
-        tareaRepository.eliminarTarea(id);
+        Optional<Tarea> tarea = tareaRepository.findById(id);
+
+        if(tarea.isPresent()){
+            tareaRepository.deleteById(id);
+            return;
+        }
     }
 
-    public Tarea cambiarEstado(Long id){
-        return tareaRepository.cambiarEstado(id);
+    @Transactional
+    public TareaResponseDTO cambiarEstado(Long id){
+        Optional<Tarea> tarea = tareaRepository.findById(id);
+
+        if(tarea.isPresent()){
+            return tarea.map(existente ->{
+                existente.setEstado("COMPLETADO");
+                return mapToDTO(tareaRepository.save(existente));
+            }).orElseThrow();
+        }
+        return null;
     }
 
 }
