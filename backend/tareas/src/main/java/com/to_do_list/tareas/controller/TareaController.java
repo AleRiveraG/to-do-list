@@ -38,7 +38,7 @@ public class TareaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarTarea(@PathVariable Long id){
         tareaService.eliminarTarea(id);
-        return ResponseEntity.status(HttpStatus.CONTINUE).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/{id}")
