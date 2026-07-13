@@ -22,11 +22,11 @@ public class Tarea {
     @Column(name = "nombre_tarea", nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false)
-    private LocalTime hora_inicio;
+    @Column(name = "hora_inicio", nullable = false)
+    private LocalTime horaInicio;
 
-    @Column(nullable = false)
-    private LocalTime hora_termino;
+    @Column(name = "hora_termino", nullable = false)
+    private LocalTime horaTermino;
 
     @Column(nullable = true)
     private String estado;
