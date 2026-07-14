@@ -1,5 +1,6 @@
 package com.to_do_list.tareas.service;
 
+import com.to_do_list.tareas.assembler.TareaModelAssembler;
 import com.to_do_list.tareas.dto.TareaRequestDTO;
 import com.to_do_list.tareas.dto.TareaResponseDTO;
 import com.to_do_list.tareas.exception.TareaNotFoundException;
@@ -18,28 +19,19 @@ import java.util.stream.Collectors;
 public class TareaService {
 
     private final TareaRepository tareaRepository;
-
-    public TareaResponseDTO mapToDTO(Tarea tarea){
-        return new TareaResponseDTO(
-                tarea.getId(),
-                tarea.getNombre(),
-                tarea.getHoraInicio(),
-                tarea.getHoraTermino(),
-                tarea.getEstado()
-        );
-    }
+    private final TareaModelAssembler tareaModelAssembler;
 
     public List<TareaResponseDTO> obtenerTodo(){
         return tareaRepository.findAll()
                 .stream()
-                .map(this::mapToDTO)
+                .map(tareaModelAssembler::toModel)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public TareaResponseDTO agregarTarea(TareaRequestDTO dto){
         Tarea tarea = new Tarea(null, dto.getNombre(), dto.getHoraInicio(), dto.getHoraTermino(), "PENDIENTE");
-        return mapToDTO(tareaRepository.save(tarea));
+        return tareaModelAssembler.toModel(tareaRepository.save(tarea));
     }
 
     @Transactional
@@ -51,7 +43,7 @@ public class TareaService {
                 existente.setHoraInicio(dto.getHoraInicio());
                 existente.setHoraTermino(dto.getHoraTermino());
 
-            return mapToDTO(tareaRepository.save(existente));
+            return tareaModelAssembler.toModel(tareaRepository.save(existente));
             }).orElseThrow();
         }
         throw new TareaNotFoundException("Tarea con id "+id+"no encontrado");
@@ -75,7 +67,7 @@ public class TareaService {
         if(tarea.isPresent()){
             return tarea.map(existente ->{
                 existente.setEstado("COMPLETADO");
-                return mapToDTO(tareaRepository.save(existente));
+                return tareaModelAssembler.toModel(tareaRepository.save(existente));
             }).orElseThrow();
         }
         throw new TareaNotFoundException("Tarea con id "+id+"no encontrado");

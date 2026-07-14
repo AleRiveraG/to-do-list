@@ -3,13 +3,14 @@ package com.to_do_list.tareas.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TareaResponseDTO {
+public class TareaResponseDTO extends RepresentationModel<TareaResponseDTO> {
 
     private Long id;
     private String nombre;
