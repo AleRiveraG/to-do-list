@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> manejoGeneral(MethodArgumentNotValidException e){
+    public ResponseEntity<?> manejoGeneral(Exception e){
         Map<String, Object> error = new LinkedHashMap<>();
 
         error.put("Fecha:", timestamp);
